@@ -2,24 +2,15 @@ import { useState } from "react";
 
 const PRIMARY = "#068bbf";
 
-export default function DeleteAccount() {
-  const [password, setPassword] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default function DeleteAccountRequest() {
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!checked) return;
-
-    setLoading(true);
-
-    // TODO: remplacer par l'appel API réel
-    setTimeout(() => {
-      setLoading(false);
-      alert("Compte supprimé");
-      // Optionnel : redirection après suppression
-      // window.location.href = "/";
-    }, 2000);
+  const handleCopyText = () => {
+    navigator.clipboard.writeText(
+      "Je souhaite supprimer définitivement mon compte TechServices ainsi que toutes les données personnelles associées."
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -32,71 +23,91 @@ export default function DeleteAccount() {
             alt="TechServices"
             style={styles.logo}
           />
-
-          <h1 style={styles.title}>Supprimer votre compte</h1>
+          <h1 style={styles.title}>Demander la suppression de votre compte</h1>
           <p style={styles.subtitle}>
-            Cette action est définitive. Veuillez lire attentivement avant de continuer.
+            Pour des raisons de sécurité, la suppression doit être traitée par notre équipe support.
           </p>
         </div>
 
-        {/* Avertissement */}
-        <div style={styles.warning}>
-          <ul style={styles.list}>
-            <li>Votre compte TechServices sera supprimé définitivement</li>
-            <li>Toutes vos données personnelles seront effacées</li>
-            <li>Historique, demandes et échanges supprimés</li>
-            <li>Aucune récupération ne sera possible</li>
-          </ul>
+        {/* Étape 1 : Être connecté – PAS DE SCREEN */}
+        <div style={styles.stepSection}>
+          <h2 style={styles.stepTitle}>1. Être connecté</h2>
+          <p style={styles.stepText}>
+            Ouvrez l'application ou le site et connectez-vous avec vos identifiants habituels. Si vous avez oublié votre mot de passe, utilisez la fonction de récupération.
+          </p>
         </div>
 
-        {/* Formulaire */}
-        <form onSubmit={handleSubmit}>
-          <label style={styles.label}>Mot de passe</label>
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-          />
-
-          <label style={styles.checkbox}>
-            <input
-              type="checkbox"
-              checked={checked}
-              onChange={(e) => setChecked(e.target.checked)}
+        {/* Étape 2 : Espace profil */}
+        <div style={styles.stepSection}>
+          <h2 style={styles.stepTitle}>2. Aller sur l'espace profil</h2>
+          <p style={styles.stepText}>
+            Une fois connecté, cliquez sur votre avatar ou l'icône profil (généralement en haut à droite) pour accéder à vos paramètres personnels.
+          </p>
+          <div style={styles.screenContainer}>
+            <img
+              src="/screen-profil.png"
+              alt="Écran profil utilisateur"
+              style={styles.screenMockup}
             />
-            <span>
-              Je confirme vouloir supprimer définitivement mon compte
-            </span>
-          </label>
+          </div>
+        </div>
 
-          <div style={styles.actions}>
-            <button type="button" style={styles.cancel}>
-              Annuler
-            </button>
+        {/* Étape 3 : Support client */}
+        <div style={styles.stepSection}>
+          <h2 style={styles.stepTitle}>3. Cliquer sur support client</h2>
+          <p style={styles.stepText}>
+            Dans le menu profil, sélectionnez "Support client" ou "Aide".
+          </p>
+          <div style={styles.screenContainer}>
+            <img
+              src="/screen-support.png"
+              alt="Écran de support client"
+              style={styles.screenMockup}
+            />
+          </div>
+        </div>
 
+        {/* Étape 4 : Créer un ticket – AVEC SCREEN */}
+        <div style={styles.stepSection}>
+          <h2 style={styles.stepTitle}>4. Créer un ticket</h2>
+          <p style={styles.stepText}>
+            Cliquez sur "Nouveau ticket" ou "Contacter le support", puis copiez-collez ce message :
+          </p>
+          <div style={styles.copyBox}>
+            <p style={styles.copyText}>
+              Je souhaite supprimer définitivement mon compte TechServices ainsi que toutes les données personnelles associées.
+            </p>
             <button
-              type="submit"
-              disabled={!checked || loading}
-              style={{
-                ...styles.delete,
-                opacity: !checked || loading ? 0.6 : 1,
-                cursor: !checked || loading ? "not-allowed" : "pointer",
-              }}
+              type="button"
+              style={styles.copyButton}
+              onClick={handleCopyText}
             >
-              {loading ? (
-                <span style={styles.loaderContainer}>
-                  <span style={styles.loader} />
-                  Suppression...
-                </span>
-              ) : (
-                "Supprimer le compte"
-              )}
+              {copied ? "Copié !" : "Copier le message"}
             </button>
           </div>
-        </form>
+          <p style={styles.tip}>
+            💡 Fournissez le maximum de détails (email, numéro de compte, raison) pour accélérer le traitement.
+          </p>
+          {/* Screen réduit ici */}
+          <div style={styles.screenContainer}>
+            <img
+              src="/screen-ticket.png"
+              alt="Écran de création de ticket support"
+              style={styles.screenMockup}
+            />
+          </div>
+        </div>
+
+        {/* Bouton final */}
+        <div style={styles.finalCTA}>
+          <button
+            type="button"
+            style={styles.next}
+            onClick={() => window.open("https://techservices.com/support", "_blank")}
+          >
+            Aller au support client
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -110,20 +121,22 @@ const styles: Record<string, React.CSSProperties> = {
     background: "linear-gradient(180deg, #f8fbfd, #ffffff)",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     padding: "24px 16px",
+    overflowY: "auto",
   },
   card: {
     width: "100%",
-    maxWidth: 480,
+    maxWidth: 520,
     background: "#ffffff",
     borderRadius: 16,
     padding: "28px 22px",
     boxShadow: "0 12px 32px rgba(0,0,0,0.08)",
+    marginTop: 20,
   },
   header: {
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 28,
   },
   logo: {
     height: 48,
@@ -142,77 +155,83 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 14,
     lineHeight: 1.5,
   },
-  warning: {
-    background: "#f0f9ff",
-    border: `1px solid ${PRIMARY}33`,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 22,
+  stepSection: {
+    marginBottom: 32,
   },
-  list: {
-    margin: 0,
-    paddingLeft: 18,
-    fontSize: 14,
+  stepTitle: {
+    fontSize: 18,
+    fontWeight: 600,
+    color: PRIMARY,
+    marginBottom: 8,
+  },
+  stepText: {
+    fontSize: 15,
     color: "#374151",
     lineHeight: 1.6,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: 500,
-    marginBottom: 6,
-    display: "block",
-  },
-  input: {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: 10,
-    border: "1px solid #e5e7eb",
     marginBottom: 16,
-    outline: "none",
-    fontSize: 14,
   },
-  checkbox: {
-    display: "flex",
-    gap: 10,
-    fontSize: 14,
-    marginBottom: 22,
-    alignItems: "flex-start",
+  screenContainer: {
+    textAlign: "center",
+    margin: "20px 0 12px 0",
   },
-  actions: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
+  screenMockup: {
+    maxWidth: 280,
+    width: "100%",
+    height: "auto",
+    borderRadius: 24,
+    boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+    border: "8px solid #000",
+    borderTopWidth: "24px",
+    borderBottomWidth: "24px",
+    background: "#000",
   },
-  cancel: {
+  copyBox: {
     background: "#f3f4f6",
-    border: "none",
-    borderRadius: 10,
-    padding: "12px 16px",
-    cursor: "pointer",
-    fontSize: 14,
+    borderRadius: 12,
+    padding: 16,
+    margin: 12,
+    borderLeft: `4px solid ${PRIMARY}`,
   },
-  delete: {
+  copyText: {
+    margin: 0,
+    color: "#111827",
+    fontSize: 15,
+    fontWeight: 500,
+    marginBottom: 10,
+  },
+  copyButton: {
+    background: PRIMARY,
+    color: "#ffffff",
+    border: "none",
+    borderRadius: 8,
+    padding: "8px 14px",
+    fontSize: 13,
+    cursor: "pointer",
+    transition: "background 0.2s",
+  },
+  tip: {
+    fontSize: 13,
+    color: "#6b7280",
+    background: "#f9fafb",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  finalCTA: {
+    textAlign: "center",
+    marginTop: 32,
+  },
+  next: {
     background: PRIMARY,
     color: "#ffffff",
     border: "none",
     borderRadius: 10,
-    padding: "12px 16px",
+    padding: "14px 24px",
+    fontSize: 16,
+    fontWeight: 600,
     cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  loaderContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-  loader: {
-    width: 16,
-    height: 16,
-    border: "3px solid rgba(255,255,255,0.3)",
-    borderTopColor: "#ffffff",
-    borderRadius: "50%",
-    animation: "spin 1s linear infinite",
+    boxShadow: "0 2px 8px rgba(6, 139, 191, 0.3)",
+    transition: "all 0.2s ease",
   },
 };
